@@ -1,7 +1,9 @@
-import logo from './logo.svg';
-import React, { useEffect, useState } from "react";
 
+import React, { useEffect, useState } from "react";
+import { ethers } from "ethers";
 import './App.css';
+import abi from "./utils/WavePortal.json";
+
 
 
 const getEthereumObject = () => window.ethereum;
@@ -10,9 +12,6 @@ const findMetaMaskAccount = async () => {
   try {
     const ethereum = getEthereumObject();
 
-    /*
-     * First make sure we have access to the Ethereum object.
-     */
     if (!ethereum) {
       console.error("Make sure you have Metamask!");
       return null;
@@ -39,6 +38,10 @@ const findMetaMaskAccount = async () => {
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
 
+  const contractAddress = "0xe0bdea42a711069551fdF058270c4c0Bc5Bc725C";
+  const contractABI = abi.abi;
+
+
   const connectWallet = async () => {
     try {
       const ethereum = getEthereumObject();
@@ -58,6 +61,44 @@ const App = () => {
     }
   };
 
+  const wave = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+
+        let count = await wavePortalContract.settle();
+        console.log(count);
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const createContract = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+
+        let count = await wavePortalContract.settle();
+        console.log(count);
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(async () => {
     const account = await findMetaMaskAccount();
     if (account !== null) {
@@ -69,17 +110,45 @@ const App = () => {
     <div className="mainContainer">
       <div className="dataContainer">
         <div className="header">
-          👋 Hey there!
+
+        Fixed Pie Games
+
         </div>
 
-        <div className="bio">
-          I am Farza and I worked on self-driving cars so that's pretty cool
-          right? Connect your Ethereum wallet and wave at me!
+        {/* <div className="bio">
+          click the drop down to see which assets you want to played fixed games with
+        </div> */}
+
+
+        <div className="CreateContract">
+          <form>
+            <label>
+              Oracle Address:
+              <input type="text" name="oracle" />
+            </label>
+
+            <label>
+              Settlement Price:
+              <input type="text" name="Price" />
+            </label>
+
+            <label>
+              Settlement Date:
+              <input type="text" name="Date" />
+            </label>
+          
+          <button className="create" onClick={wave}>
+              Create Contract
+          </button>
+          </form>
+
         </div>
 
-        <button className="waveButton" onClick={null}>
+
+
+        {/* <button className="waveButton" onClick={wave}>
           Wave at Me
-        </button>
+        </button> */}
 
         {/*
          * If there is no currentAccount render this button
