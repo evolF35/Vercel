@@ -1,22 +1,20 @@
 
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
+import Web3 from "web3";
+
 import './App.css';
-import abi from "./utils/WavePortal.json";
-
-
+import abi from "./utils/GenPool.json";
 
 const getEthereumObject = () => window.ethereum;
 
 const findMetaMaskAccount = async () => {
   try {
     const ethereum = getEthereumObject();
-
     if (!ethereum) {
       console.error("Make sure you have Metamask!");
       return null;
     }
-
     console.log("We have the Ethereum object", ethereum);
     const accounts = await ethereum.request({ method: "eth_accounts" });
 
@@ -34,13 +32,18 @@ const findMetaMaskAccount = async () => {
   }
 };
 
-
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
 
-  const contractAddress = "0xe0bdea42a711069551fdF058270c4c0Bc5Bc725C";
+  const [num, setNum] = useState(0);
+  
   const contractABI = abi.abi;
 
+  const deployContract = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum); // Connect to the Ethereum network
+    const contract = new ethers.Contract(contractABI, provider.getSigner()); // Create a new contract instance
+    const deployedContract = await contract.deploy(num); 
+  };
 
   const connectWallet = async () => {
     try {
@@ -61,50 +64,13 @@ const App = () => {
     }
   };
 
-  const wave = async () => {
-    try {
-      const { ethereum } = window;
-
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
-        const wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
-
-        let count = await wavePortalContract.settle();
-        console.log(count);
-      } else {
-        console.log("Ethereum object doesn't exist!");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  const createContract = async () => {
-    try {
-      const { ethereum } = window;
-
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
-        const wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
-
-        let count = await wavePortalContract.settle();
-        console.log(count);
-      } else {
-        console.log("Ethereum object doesn't exist!");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   useEffect(async () => {
     const account = await findMetaMaskAccount();
     if (account !== null) {
       setCurrentAccount(account);
     }
   }, []);
+  
 
   return (
     <div className="mainContainer">
@@ -114,45 +80,38 @@ const App = () => {
         Fixed Pie Games
 
         </div>
-
-        {/* <div className="bio">
-          click the drop down to see which assets you want to played fixed games with
-        </div> */}
-
-
-        <div className="CreateContract">
-          <form>
-            <label>
-              Oracle Address:
-              <input type="text" name="oracle" />
-            </label>
-
-            <label>
-              Settlement Price:
-              <input type="text" name="Price" />
-            </label>
-
-            <label>
-              Settlement Date:
-              <input type="text" name="Date" />
-            </label>
-          
-          <button className="create" onClick={wave}>
-              Create Contract
-          </button>
-          </form>
+<div>
+      <form onSubmit={deployContract}>
+        <label>
+          Oracle:
+          <input
+            type="number"
+            value={num}
+            onChange={(event) => setNum(event.target.value)}
+          />
+        </label>
+        <label>
+          Price:
+          <input
+            type="number"
+            value={num}
+            onChange={(event) => setNum(event.target.value)}
+          />
+        </label>
+        <label>
+          Date:
+          <input
+            type="number"
+            value={num}
+            onChange={(event) => setNum(event.target.value)}
+          />
+        </label>
+        <button type="submit">Deploy Contract</button>
+      </form>
+    </div>
 
         </div>
 
-
-
-        {/* <button className="waveButton" onClick={wave}>
-          Wave at Me
-        </button> */}
-
-        {/*
-         * If there is no currentAccount render this button
-         */}
         {!currentAccount && (
           <button className="waveButton" onClick={connectWallet}>
             Connect Wallet
@@ -160,7 +119,6 @@ const App = () => {
         )}
 
 </div>
-    </div>
   );
 };
 
