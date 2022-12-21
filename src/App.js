@@ -5,6 +5,7 @@ import Web3 from "web3";
 
 import './App.css';
 import abi from "./utils/GenPool.json";
+import Fomo from './form.js';
 
 const getEthereumObject = () => window.ethereum;
 
@@ -74,43 +75,9 @@ const App = () => {
 
   return (
     <div className="mainContainer">
-      <div className="dataContainer">
-        <div className="header">
+      <h1 > work?</h1>
 
-        Fixed Pie Games
-
-        </div>
-<div>
-      <form onSubmit={deployContract}>
-        <label>
-          Oracle:
-          <input
-            type="number"
-            value={num}
-            onChange={(event) => setNum(event.target.value)}
-          />
-        </label>
-        <label>
-          Price:
-          <input
-            type="number"
-            value={num}
-            onChange={(event) => setNum(event.target.value)}
-          />
-        </label>
-        <label>
-          Date:
-          <input
-            type="number"
-            value={num}
-            onChange={(event) => setNum(event.target.value)}
-          />
-        </label>
-        <button type="submit">Deploy Contract</button>
-      </form>
-    </div>
-
-        </div>
+    <Fomo />
 
         {!currentAccount && (
           <button className="waveButton" onClick={connectWallet}>
