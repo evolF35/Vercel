@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+
+
 const Fomo = () => {
   const [input1, setInput1] = useState('');
   const [input2, setInput2] = useState('');
@@ -99,7 +101,7 @@ const Fomo = () => {
         />
       </label>
       <br />
-        <button type="submit">Deploy Contract</button>
+        <button type="submit">Deploy Pool</button>
   </form>
 );
 };
