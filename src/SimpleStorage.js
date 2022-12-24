@@ -84,8 +84,12 @@ const SimpleStorage = () => {
 		<h4> {"Get/Set Contract interaction"} </h4>
 			<button onClick={connectWalletHandler}>{connButtonText}</button>
 			<div>
-				<h3>Address: {defaultAccount}</h3>
+				<h3>User_Address: {defaultAccount}</h3>
 			</div>
+      <div>
+        <p>Deployer Contract: 0x7bDeD041832b5722927994443d69c87a0450b1E1</p>
+        <p> On : Goerli Testnet </p>
+      </div>
 
             <form onSubmit={setHandler2}>
       <label>
