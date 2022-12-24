@@ -92,6 +92,7 @@ const SimpleStorage = () => {
         Oracle Address
         <input id="setText1"
           type="text"
+          placeholder='0x0000000000000000000000000000000000000000'
         />
       </label>
       <br />
@@ -99,13 +100,15 @@ const SimpleStorage = () => {
         Settlement Price
         <input id="setText2"
           type="text"
+          placeholder='2000'
         />
       </label>
       <br />
       <label>
-      Settlement Date
+      Settlement Date in Unix Time
         <input id="setText3"
           type="text"
+            placeholder='1671842154'
         />
       </label>
       <br />
@@ -113,20 +116,25 @@ const SimpleStorage = () => {
         Decay Rate
         <input id="setText4"
           type="text"
+          placeholder='2'
         />
+        Percent decrease of inputs per day. 2 = 2% decrease per day
       </label>
       <br />
       <label>
         Min Ratio of Pool
         <input id="setText5"
           type="text"
+          placeholder='2'
         />
+        2 = 2:1 . So 2 eth in POS vs 1 eth in NEG side of Pool
       </label>
       <br />
       <label>
-        Min Ratio Date
+        Min Ratio Date in Unix Time
         <input id="setText6"
           type="text"
+            placeholder='1671842154'
         />
       </label>
       <br />
@@ -134,6 +142,7 @@ const SimpleStorage = () => {
         Name
         <input id="setText7"
           type="text"
+          placeholder='lolcats'
         />
       </label>
       <br />
@@ -141,6 +150,7 @@ const SimpleStorage = () => {
         Acronym 
         <input id="setText8"
           type="text"
+          placeholder='lol'
         />
       </label>
         <br />
