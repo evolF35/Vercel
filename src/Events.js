@@ -1,8 +1,9 @@
+
 import React, {useState} from 'react'
 import {ethers} from 'ethers'
 import SimpleStorage_abi from './SimpleStorageABI.json'
 
-const SimpleStorage = () => {
+const Event = () => {
 
 	// deploy simple storage contract and paste deployed contract address here. This value is local ganache chain
 	let contractAddress = '0x7bDeD041832b5722927994443d69c87a0450b1E1';
@@ -62,26 +63,23 @@ const SimpleStorage = () => {
 
 		let tempContract = new ethers.Contract(contractAddress, SimpleStorage_abi, tempSigner);
 		setContract(tempContract);	
+        console.log("contract set");
 	}
 
-    const setHandler2 = (event) => {
-		event.preventDefault();
-		console.log('sending ' + event.target.setText1.value + ' to the contract');
-		contract.createPool(
-            event.target.setText1.value,
-            event.target.setText2.value,
-            event.target.setText3.value,
-            event.target.setText4.value,
-            event.target.setText5.value,
-            event.target.setText6.value,
-            event.target.setText7.value,
-            event.target.setText8.value,
-            );
-	}
+    const getEvents = async () => {
+        contract.on("createPool", 
+        (oracle, price, date,
+            decay, minratio, minratiodate,
+            nme,acronym, event) => {
+            console.log(`Oracle: ${oracle} Price: ${price} Date: ${date} Decay: ${decay} MinRatio: ${minratio} MinRatioDate: ${minratiodate} Name: ${nme} Acronym: ${acronym} Event: ${event} `);
+        });
+      };
+      
+          
 
 	return (
 		<div>
-		<h4> Pool Deployer </h4>
+		<h4> Current Pools </h4>
 			<button onClick={connectWalletHandler}>{connButtonText}</button>
 			<div>
 				<h3>User_Address: {defaultAccount}</h3>
@@ -90,80 +88,11 @@ const SimpleStorage = () => {
         <p>Deployer Contract: 0x7bDeD041832b5722927994443d69c87a0450b1E1</p>
         <p> On : Goerli Testnet </p>
       </div>
-
-            <form onSubmit={setHandler2}>
-      <label>
-        Oracle Address
-        <input id="setText1"
-          type="text"
-          placeholder='0x0000000000000000000000000000000000000000'
-        />
-      </label>
-      <br />
-      <label>
-        Settlement Price
-        <input id="setText2"
-          type="text"
-          placeholder='2000'
-        />
-      </label>
-      <br />
-      <label>
-      Settlement Date in Unix Time
-        <input id="setText3"
-          type="text"
-            placeholder='1671842154'
-        />
-      </label>
-      <br />
-      <label>
-        Decay Rate
-        <input id="setText4"
-          type="text"
-          placeholder='2'
-        />
-        Percent decrease of inputs per day. 2 = 2% decrease per day
-      </label>
-      <br />
-      <label>
-        Min Ratio of Pool
-        <input id="setText5"
-          type="text"
-          placeholder='2'
-        />
-        2 = 2:1 . So 2 eth in POS vs 1 eth in NEG side of Pool
-      </label>
-      <br />
-      <label>
-        Min Ratio Date in Unix Time
-        <input id="setText6"
-          type="text"
-            placeholder='1671842154'
-        />
-      </label>
-      <br />
-      <label>
-        Name
-        <input id="setText7"
-          type="text"
-          placeholder='lolcats'
-        />
-      </label>
-      <br />
-      <label>
-        Acronym 
-        <input id="setText8"
-          type="text"
-          placeholder='lol'
-        />
-      </label>
-        <br />
-        <button type="submit">Deploy Pool</button>
-  </form>
+            <button onClick={getEvents}>Get Events</button>
 
 			{errorMessage}
 		</div>
 	);
 }
 
-export default SimpleStorage;
+export default Event;
