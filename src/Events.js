@@ -67,12 +67,13 @@ const Event = () => {
 	}
 
     const getEvents = async () => {
-        contract.on("createPool", 
-        (oracle, price, date,
-            decay, minratio, minratiodate,
-            nme,acronym, event) => {
-            console.log(`Oracle: ${oracle} Price: ${price} Date: ${date} Decay: ${decay} MinRatio: ${minratio} MinRatioDate: ${minratiodate} Name: ${nme} Acronym: ${acronym} Event: ${event} `);
-        });
+
+
+		const tb = await contract.queryFilter("*");
+		console.log(tb);
+
+		//tb = 
+
       };
       
           
