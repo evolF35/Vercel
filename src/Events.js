@@ -2,6 +2,7 @@
 import React, {useState} from 'react'
 import {ethers} from 'ethers'
 import SimpleStorage_abi from './SimpleStorageABI.json'
+import Event_abi from './Pool.json'
 
 
 const Event = () => {
