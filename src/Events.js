@@ -3,6 +3,7 @@ import React, {useState} from 'react'
 import {ethers} from 'ethers'
 import SimpleStorage_abi from './SimpleStorageABI.json'
 
+
 const Event = () => {
 
 	// deploy simple storage contract and paste deployed contract address here. This value is local ganache chain
@@ -18,6 +19,8 @@ const Event = () => {
 	const [signer, setSigner] = useState(null);
 	const [contract, setContract] = useState(null);
 
+	const [tb, setTb] = useState(null)
+
 	const connectWalletHandler = () => {
 		if (window.ethereum && window.ethereum.isMetaMask) {
 
@@ -28,7 +31,6 @@ const Event = () => {
 			})
 			.catch(error => {
 				setErrorMessage(error.message);
-			
 			});
 
 		} else {
@@ -65,17 +67,19 @@ const Event = () => {
 		setContract(tempContract);	
         console.log("contract set");
 	}
+	
 
     const getEvents = async () => {
-
 
 		const tb = await contract.queryFilter("*");
 		console.log(tb);
 
-		//tb = 
+		console.log(tb[0].args[0]);
+		setTb(tb);
 
       };
       
+
           
 
 	return (
@@ -90,8 +94,58 @@ const Event = () => {
         <p> On : Goerli Testnet </p>
       </div>
             <button onClick={getEvents}>Get Events</button>
-
 			{errorMessage}
+
+			{tb && (
+        <table>
+          <thead>
+            <tr>
+			<th> Total Balance </th>
+			<th> POS Balance </th>
+			<th> NEG Balance </th>
+			<th> Contract Address </th>
+              <th>Oracle Address</th>
+              <th> Settlement Price </th>
+			  <th> Settlement Data </th>
+			  <th> Decay Rate  </th>
+			  <th> Minimum Ratio </th>
+			  <th> Minimum Ratio Date </th>
+			  <th> name </th>
+			  <th> acronym </th>
+
+			  <th> Deposit POS </th>
+			  <th> Deposit NEG </th>
+            </tr>
+          </thead>
+          <tbody>
+            {tb.map((event, index) => (
+              <tr key={index}>
+
+				<td>{event.args[8].toString()}</td>
+				<td>{event.args[8].toString()}</td>
+				<td>{event.args[8].toString()}</td>
+
+
+                <td>{event.args[8].toString()}</td>
+                <td>{event.args[0].toString()}</td>
+                <td>{event.args[1].toString()}</td>
+                <td>{event.args[2].toString()}</td>
+                <td>{event.args[3].toString()}</td>
+				<td>{event.args[4].toString()}</td>
+                <td>{event.args[5].toString()}</td>
+                <td>{event.args[6].toString()}</td>
+				<td>{event.args[7].toString()}</td>
+
+				<td>{event.args[7].toString()}</td>
+				<td>{event.args[7].toString()}</td>
+
+
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+	  
 		</div>
 	);
 }
