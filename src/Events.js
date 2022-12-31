@@ -78,10 +78,24 @@ const Event = () => {
 		console.log(tb[0].args[0]);
 		setTb(tb);
 
-      };
-      
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
 
-          
+		let tempSigner2 = tempProvider2.getSigner();
+		let tempContract2 = new ethers.Contract(tb[0].args[8], Event_abi, tempProvider2);
+
+		let tempContractVal = await tempContract2.getCondition();
+		const balance2 = await provider.getBalance(`${tb[0].args[8]}`);
+
+		console.log(tempContractVal);
+		console.log(balance2);
+		
+		let tempContract3 = new ethers.Contract(tb[3].args[8], Event_abi, tempProvider2);
+		console.log(tempContract3);
+
+
+
+      };
+
 
 	return (
 		<div>
@@ -101,13 +115,15 @@ const Event = () => {
         <table>
           <thead>
             <tr>
+
 			<th> Total Balance </th>
 			<th> POS Balance </th>
 			<th> NEG Balance </th>
+
 			<th> Contract Address </th>
               <th>Oracle Address</th>
               <th> Settlement Price </th>
-			  <th> Settlement Data </th>
+			  <th> Settlement Date </th>
 			  <th> Decay Rate  </th>
 			  <th> Minimum Ratio </th>
 			  <th> Minimum Ratio Date </th>
@@ -116,6 +132,14 @@ const Event = () => {
 
 			  <th> Deposit POS </th>
 			  <th> Deposit NEG </th>
+
+				
+			  <th> POS address </th>
+			  <th> NEG address </th>
+
+
+
+
             </tr>
           </thead>
           <tbody>
@@ -140,6 +164,8 @@ const Event = () => {
 				<td>{event.args[7].toString()}</td>
 				<td>{event.args[7].toString()}</td>
 
+				<td>{event.args[7].toString()}</td>
+				<td>{event.args[7].toString()}</td>
 
               </tr>
             ))}
