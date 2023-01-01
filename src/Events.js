@@ -8,7 +8,7 @@ import Event_abi from './Pool.json'
 const Event = () => {
 
 	// deploy simple storage contract and paste deployed contract address here. This value is local ganache chain
-	let contractAddress = '0x7bDeD041832b5722927994443d69c87a0450b1E1';
+	let contractAddress = '0x40b8Af977B85201937972d2707E3edC44C45007a';
 
 	const [errorMessage, setErrorMessage] = useState(null);
 	const [defaultAccount, setDefaultAccount] = useState(null);
@@ -73,9 +73,9 @@ const Event = () => {
     const getEvents = async () => {
 
 		const tb = await contract.queryFilter("*");
-		console.log(tb);
+		//console.log(tb);
 
-		console.log(tb[0].args[0]);
+		console.log(tb[0]);
 		setTb(tb);
 
 		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
@@ -86,11 +86,16 @@ const Event = () => {
 		let tempContractVal = await tempContract2.getCondition();
 		const balance2 = await provider.getBalance(`${tb[0].args[8]}`);
 
-		console.log(tempContractVal);
-		console.log(balance2);
+		//console.log(tempContractVal);
+		//console.log(balance2);
 		
 		let tempContract3 = new ethers.Contract(tb[3].args[8], Event_abi, tempProvider2);
-		console.log(tempContract3);
+		//console.log(tempContract3);
+
+		const tb2 = await tempContract3.queryFilter("*");
+		console.log(tb2);
+
+		console.log(tb2[0].args[0].toString());
 
 
 
@@ -105,7 +110,7 @@ const Event = () => {
 				<h3>User_Address: {defaultAccount}</h3>
 			</div>
       <div>
-        <p>Deployer Contract: 0x7bDeD041832b5722927994443d69c87a0450b1E1</p>
+        <p>Deployer Contract: {contractAddress}</p>
         <p> On : Goerli Testnet </p>
       </div>
             <button onClick={getEvents}>Get Events</button>

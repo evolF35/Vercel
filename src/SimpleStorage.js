@@ -5,7 +5,7 @@ import SimpleStorage_abi from './SimpleStorageABI.json'
 const SimpleStorage = () => {
 
 	// deploy simple storage contract and paste deployed contract address here. This value is local ganache chain
-	let contractAddress = '0x7bDeD041832b5722927994443d69c87a0450b1E1';
+	let contractAddress = '0x40b8Af977B85201937972d2707E3edC44C45007a';
 
 	const [errorMessage, setErrorMessage] = useState(null);
 	const [defaultAccount, setDefaultAccount] = useState(null);
@@ -87,7 +87,7 @@ const SimpleStorage = () => {
 				<h3>User_Address: {defaultAccount}</h3>
 			</div>
       <div>
-        <p>Deployer Contract: 0x7bDeD041832b5722927994443d69c87a0450b1E1</p>
+        <p>Deployer Contract: {contractAddress}</p>
         <p> On : Goerli Testnet </p>
       </div>
 
