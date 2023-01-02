@@ -160,8 +160,14 @@ const Event = () => {
 
 	}
 
-	const depositToPOS = async () => {
+	const depositToPOS = async (event) => {
+		event.preventDefault();
+		console.log("memes");
+	}
 
+	const depositToNEG = async (event) => {
+		event.preventDefault();
+		console.log("Looney");
 	}
 
 
@@ -227,8 +233,8 @@ const Event = () => {
 				<td>{event.zPOSADD}</td>
 				<td>{event.zNEGADD}</td>
 
-				<td> <button onClick={depositToPOS}> POS <input></input> </button></td>
-				<td><button onClick={depositToPOS}> NEG <input></input> </button></td>
+				<td> <form onSubmit={depositToPOS} > <input></input> <button type="submit" >POS</button> </form> </td>
+				<td> <form onSubmit={depositToNEG} > <input></input> <button type="submit">NEG</button> </form> </td>
 
               </tr>
             ))}
