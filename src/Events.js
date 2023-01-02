@@ -160,21 +160,45 @@ const Event = () => {
 
 	}
 
-	const depositToPOS = async (event) => {
+	const depToPOS = async (event,Addr1) => {
 		event.preventDefault();
 		console.log("memes");
+		console.log(event);
+		console.log(event.target[0])
 
 		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
 		let tempSigner2 = tempProvider2.getSigner();
 
-		//let tempContract3 = new ethers.Contract(tb[event], Event_abi, tempProvider2);
+		let tempContract3 = new ethers.Contract(Addr1, Event_abi, tempSigner2);
+		console.log(tempContract3);
 
-
+		
 	}
 
-	const depositToNEG = async (event) => {
+	const depToNEG = async (event,Addr1) => {
+
+		console.log(Addr1);
 		event.preventDefault();
 		console.log("Looney");
+		console.log(event);
+		console.log(event.target[0])
+
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract3 = new ethers.Contract(Addr1, Event_abi, tempSigner2);
+		console.log(tempContract3);
+
+		console.log(event.target[0].value);
+
+		const lockedAmount = ethers.utils.parseEther("0.01");
+
+		let stringNum = (event.target[0].value).toString();
+		let deus = ethers.utils.parseEther(stringNum);
+		console.log(deus);
+
+		tempContract3.depositToNEG({value:deus});
+
 	}
 
 
@@ -240,8 +264,8 @@ const Event = () => {
 				<td>{event.zPOSADD}</td>
 				<td>{event.zNEGADD}</td>
 
-				<td> <form onSubmit={depositToPOS} > <input id={"POS"+index} type="text" ></input> <button type="submit" >POS</button> </form> </td>
-				<td> <form onSubmit={depositToNEG} > <input id={"NEG"+index} type="text" ></input> <button type="submit">NEG</button> </form> </td>
+				<td> <form onSubmit={(e) => depToPOS(e, event.args[8].toString())}> <input id={"POS"+index} type="text" ></input> <button type="submit" >POS</button> </form> </td>
+				<td> <form onSubmit={(e) => depToNEG(e, event.args[8].toString())}> <input id={"NEG"+index} type="text" ></input> <button type="submit" >NEG</button> </form> </td>
 
               </tr>
             ))}
