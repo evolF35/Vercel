@@ -20,7 +20,8 @@ const Event = () => {
 	const [signer, setSigner] = useState(null);
 	const [contract, setContract] = useState(null);
 
-	const [tb, setTb] = useState(null)
+	const [tb, setTb] = useState(null);
+	const [tb2,setTb2] = useState(null);
 
 	const connectWalletHandler = () => {
 		if (window.ethereum && window.ethereum.isMetaMask) {
@@ -73,33 +74,95 @@ const Event = () => {
     const getEvents = async () => {
 
 		const tb = await contract.queryFilter("*");
-		//console.log(tb);
-
-		console.log(tb[0]);
 		setTb(tb);
 
+		let z = poolInfo(tb[0].args[8]);
+		console.log(z);
+
+		console.log(tb[0].args[8]);
+
+		const modifiedTb = tb.map(async (element, index) => {
+			const zPOSBal = await getPoolInfo(tb[index].args[8]);
+
+			let zPOSADD = zPOSBal[0].args[0];
+			let zNEGADD = zPOSBal[0].args[1];
+
+			let depPOS = await getpoolPOSDEP(tb[index].args[8]);
+			let depNEG = await getpoolNEGDEP(tb[index].args[8]);
+			let totBal = await getpoolTOTDEP(tb[index].args[8]);
+
+			return {
+			  ...element, // Spread the existing properties of element
+			  zPOSBal: depPOS.toString(),
+			  zNEGBal: depNEG.toString(),
+			  zPOSADD: zPOSADD,
+			  zNEGADD: zNEGADD,
+			  zTOTBAL: totBal.toString()
+			}
+		  });
+		  
+		console.log(modifiedTb);
+
+		let done = await Promise.all(modifiedTb);
+		console.log(done);
+
+		setTb(done);
+	}
+	  
+	  const getPoolInfo = async (pool) => {
+		try {
+		  const result = await poolInfo(pool);
+		  return result;
+		} catch (error) {
+		  console.error(error);
+		}
+	  };
+
+	  const poolInfo = async (pool) => {
+
 		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
-
 		let tempSigner2 = tempProvider2.getSigner();
-		let tempContract2 = new ethers.Contract(tb[0].args[8], Event_abi, tempProvider2);
 
-		let tempContractVal = await tempContract2.getCondition();
-		const balance2 = await provider.getBalance(`${tb[0].args[8]}`);
+		let tempContract3 = new ethers.Contract(pool, Event_abi, tempProvider2);
+		const bfor4 = await tempContract3.queryFilter("*");
+		return(bfor4);
+	}
 
-		//console.log(tempContractVal);
-		//console.log(balance2);
-		
-		let tempContract3 = new ethers.Contract(tb[3].args[8], Event_abi, tempProvider2);
-		//console.log(tempContract3);
+	const getpoolPOSDEP = async (pool) => {
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
 
-		const tb2 = await tempContract3.queryFilter("*");
-		console.log(tb2);
+		let tempContract3 = new ethers.Contract(pool, Event_abi, tempProvider2);
 
-		console.log(tb2[0].args[0].toString());
+		let depPOS = await tempContract3.getDepNumPOS();
+		return(depPOS);
+	}
 
+	const getpoolNEGDEP = async (pool) => {
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
 
+		let tempContract3 = new ethers.Contract(pool, Event_abi, tempProvider2);
 
-      };
+		let depNEG = await tempContract3.getDepNumNEG();
+		return(depNEG);
+	}
+
+	const getpoolTOTDEP = async (pool) => {
+
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract3 = new ethers.Contract(pool, Event_abi, tempProvider2);
+
+		const balance = await tempProvider2.getBalance(pool);
+		return(balance);
+
+	}
+
+	const depositToPOS = async () => {
+
+	}
 
 
 	return (
@@ -134,16 +197,12 @@ const Event = () => {
 			  <th> Minimum Ratio Date </th>
 			  <th> name </th>
 			  <th> acronym </th>
-
-			  <th> Deposit POS </th>
-			  <th> Deposit NEG </th>
-
 				
 			  <th> POS address </th>
 			  <th> NEG address </th>
 
-
-
+			  <th> Deposit POS </th>
+			  <th> Deposit NEG </th>
 
             </tr>
           </thead>
@@ -151,10 +210,9 @@ const Event = () => {
             {tb.map((event, index) => (
               <tr key={index}>
 
-				<td>{event.args[8].toString()}</td>
-				<td>{event.args[8].toString()}</td>
-				<td>{event.args[8].toString()}</td>
-
+				<td>{event.zTOTBAL}</td>
+				<td>{event.zPOSBal}</td>
+				<td>{event.zNEGBal}</td>
 
                 <td>{event.args[8].toString()}</td>
                 <td>{event.args[0].toString()}</td>
@@ -166,11 +224,11 @@ const Event = () => {
                 <td>{event.args[6].toString()}</td>
 				<td>{event.args[7].toString()}</td>
 
-				<td>{event.args[7].toString()}</td>
-				<td>{event.args[7].toString()}</td>
+				<td>{event.zPOSADD}</td>
+				<td>{event.zNEGADD}</td>
 
-				<td>{event.args[7].toString()}</td>
-				<td>{event.args[7].toString()}</td>
+				<td> <button onClick={depositToPOS}> POS <input></input> </button></td>
+				<td><button onClick={depositToPOS}> NEG <input></input> </button></td>
 
               </tr>
             ))}
