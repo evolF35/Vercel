@@ -163,6 +163,13 @@ const Event = () => {
 	const depositToPOS = async (event) => {
 		event.preventDefault();
 		console.log("memes");
+
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		//let tempContract3 = new ethers.Contract(tb[event], Event_abi, tempProvider2);
+
+
 	}
 
 	const depositToNEG = async (event) => {
@@ -233,8 +240,8 @@ const Event = () => {
 				<td>{event.zPOSADD}</td>
 				<td>{event.zNEGADD}</td>
 
-				<td> <form onSubmit={depositToPOS} > <input></input> <button type="submit" >POS</button> </form> </td>
-				<td> <form onSubmit={depositToNEG} > <input></input> <button type="submit">NEG</button> </form> </td>
+				<td> <form onSubmit={depositToPOS} > <input id={"POS"+index} type="text" ></input> <button type="submit" >POS</button> </form> </td>
+				<td> <form onSubmit={depositToNEG} > <input id={"NEG"+index} type="text" ></input> <button type="submit">NEG</button> </form> </td>
 
               </tr>
             ))}
