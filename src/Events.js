@@ -3,6 +3,7 @@ import React, {useState} from 'react'
 import {ethers} from 'ethers'
 import SimpleStorage_abi from './SimpleStorageABI.json'
 import Event_abi from './Pool.json'
+import Claim_abi from './Claim.json'
 
 
 const Event = () => {
@@ -91,13 +92,23 @@ const Event = () => {
 			let depNEG = await getpoolNEGDEP(tb[index].args[8]);
 			let totBal = await getpoolTOTDEP(tb[index].args[8]);
 
+			let condition = await getpoolCondition(tb[index].args[8]);
+			let withdrawON = await getpoolWithdrawOn(tb[index].args[8]);
+			let dValue = await getpoolDiscountedValue(tb[index].args[8]);
+			let pastSettleDate = await getpoolPastSettlementDate(tb[index].args[8]);
+
+
 			return {
 			  ...element, // Spread the existing properties of element
-			  zPOSBal: depPOS.toString(),
-			  zNEGBal: depNEG.toString(),
+			  zPOSBal: (ethers.utils.formatEther(depPOS)).toString(),
+			  zNEGBal: (ethers.utils.formatEther(depNEG)).toString(),
 			  zPOSADD: zPOSADD,
 			  zNEGADD: zNEGADD,
-			  zTOTBAL: totBal.toString()
+			  zTOTBAL: (ethers.utils.formatEther(totBal)).toString(),
+			  zCONDITION: condition.toString(),
+			  zWITHDRAW: withdrawON.toString(),
+			  zDVALUE: dValue.toString(),
+			  zPSDATE: pastSettleDate.toString(),
 			}
 		  });
 		  
@@ -157,50 +168,195 @@ const Event = () => {
 
 		const balance = await tempProvider2.getBalance(pool);
 		return(balance);
-
 	}
+
+	const getpoolCondition = async (pool) => {
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract3 = new ethers.Contract(pool, Event_abi, tempProvider2);
+
+		let depNEG = await tempContract3.getCondition();
+		return(depNEG);
+	}
+
+	const getpoolCurrentRatio = async (pool) => {
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract3 = new ethers.Contract(pool, Event_abi, tempProvider2);
+
+		let depNEG = await tempContract3.getCurrentRatio();
+		return(depNEG);
+	}
+
+	const getpoolWithdrawOn = async (pool) => {
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract3 = new ethers.Contract(pool, Event_abi, tempProvider2);
+
+		let depNEG = await tempContract3.withdrawOn();
+		return(depNEG);
+	}
+
+	const getpoolDiscountedValue = async (pool) => {
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract3 = new ethers.Contract(pool, Event_abi, tempProvider2);
+
+		let depNEG = await tempContract3.getDiscountedValue();
+		return(depNEG);
+	}
+
+	const getpoolPastSettlementDate = async (pool) => {
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract3 = new ethers.Contract(pool, Event_abi, tempProvider2);
+
+		let depNEG = await tempContract3.pastSettlementDate();
+		return(depNEG);
+	}
+
+
+
 
 	const depToPOS = async (event,Addr1) => {
 		event.preventDefault();
-		console.log("memes");
-		console.log(event);
-		console.log(event.target[0])
-
-		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
-		let tempSigner2 = tempProvider2.getSigner();
-
-		let tempContract3 = new ethers.Contract(Addr1, Event_abi, tempSigner2);
-		console.log(tempContract3);
-
 		
-	}
-
-	const depToNEG = async (event,Addr1) => {
-
-		console.log(Addr1);
-		event.preventDefault();
-		console.log("Looney");
-		console.log(event);
-		console.log(event.target[0])
-
 		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
 		let tempSigner2 = tempProvider2.getSigner();
 
 		let tempContract3 = new ethers.Contract(Addr1, Event_abi, tempSigner2);
-		console.log(tempContract3);
-
-		console.log(event.target[0].value);
 
 		const lockedAmount = ethers.utils.parseEther("0.01");
 
 		let stringNum = (event.target[0].value).toString();
 		let deus = ethers.utils.parseEther(stringNum);
-		console.log(deus);
 
-		tempContract3.depositToNEG({value:deus});
-
+		await tempContract3.depositToPOS({value:deus});
 	}
 
+	const depToNEG = async (event,Addr1) => {
+		
+		event.preventDefault();
+		
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract3 = new ethers.Contract(Addr1, Event_abi, tempSigner2);
+
+		const lockedAmount = ethers.utils.parseEther("0.01");
+
+		let stringNum = (event.target[0].value).toString();
+		let deus = ethers.utils.parseEther(stringNum);
+
+		await tempContract3.depositToNEG({value:deus});
+	}
+
+	const approveNEG = async (event,Addr1,Addr2) => {
+		
+		event.preventDefault();
+		
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract44 = new ethers.Contract(Addr1, Claim_abi, tempProvider2);
+		let tempContract3 = new ethers.Contract(Addr1, Claim_abi, tempSigner2);
+
+		let balance = await tempContract44.balanceOf(defaultAccount);
+
+		await tempContract3.approve(Addr2,balance);
+	}
+
+	const approvePOS = async (event,Addr1,Addr2) => {
+		
+		event.preventDefault();
+		
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract44 = new ethers.Contract(Addr1, Claim_abi, tempProvider2);
+		let tempContract3 = new ethers.Contract(Addr1, Claim_abi, tempSigner2);
+
+		let balance = await tempContract44.balanceOf(defaultAccount);
+
+		await tempContract3.approve(Addr2,balance);
+	}
+
+	const redeemwithPOS = async (event,Addr1) => {
+		
+		event.preventDefault();
+		
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract3 = new ethers.Contract(Addr1, Event_abi, tempSigner2);
+
+		await tempContract3.redeemWithPOS();
+	}
+
+	const redeemwithNEG = async (event,Addr1) => {
+		
+		event.preventDefault();
+		
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract3 = new ethers.Contract(Addr1, Event_abi, tempSigner2);
+
+		await tempContract3.redeemWithNEG();
+	}
+
+	const withdrawNEG = async (event,Addr1) => {
+		
+		event.preventDefault();
+		
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract3 = new ethers.Contract(Addr1, Event_abi, tempSigner2);
+
+		await tempContract3.withdrawWithNEG();
+	}
+
+	const withdrawPOS = async (event,Addr1) => {
+		
+		event.preventDefault();
+		
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract3 = new ethers.Contract(Addr1, Event_abi, tempSigner2);
+
+		await tempContract3.withdrawWithPOS();
+	}
+
+	const settleClaims = async (event,Addr1) => {
+		
+		event.preventDefault();
+		
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract3 = new ethers.Contract(Addr1, Event_abi, tempSigner2);
+
+		await tempContract3.settle();
+	}
+
+	const makeWithdrawable = async (event,Addr1) => {
+		
+		event.preventDefault();
+		
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract3 = new ethers.Contract(Addr1, Event_abi, tempSigner2);
+
+		await tempContract3.turnWithdrawOn();
+	}
 
 	return (
 		<div>
@@ -225,6 +381,12 @@ const Event = () => {
 			<th> POS Balance </th>
 			<th> NEG Balance </th>
 
+			<th> Past Settlement Date </th>
+			<th> Condition </th>
+			<th> Discount Rate </th>
+			<th> Withdraw </th>
+
+
 			<th> Contract Address </th>
               <th>Oracle Address</th>
               <th> Settlement Price </th>
@@ -241,6 +403,18 @@ const Event = () => {
 			  <th> Deposit POS </th>
 			  <th> Deposit NEG </th>
 
+			  <th> Approve POS </th>
+			  <th> Approve NEG </th>
+
+			  <th> Redeem POS </th>
+			  <th> Redeem NEG </th>
+
+			  <th> Withdraw POS </th>
+			  <th> Withdraw NEG </th>
+
+			  <th> settle </th>
+			  <th> turnWithdrawOn </th>
+
             </tr>
           </thead>
           <tbody>
@@ -251,8 +425,14 @@ const Event = () => {
 				<td>{event.zPOSBal}</td>
 				<td>{event.zNEGBal}</td>
 
-                <td>{event.args[8].toString()}</td>
-                <td>{event.args[0].toString()}</td>
+				<td> {event.zPSDATE} </td>
+				<td> {event.zCONDITION} </td>
+				<td> {event.zDVALUE} </td>
+				<td> {event.zWITHDRAW} </td>
+
+
+                <td className='address'>{event.args[8].toString()}</td>
+                <td className='address'>{event.args[0].toString()}</td>
                 <td>{event.args[1].toString()}</td>
                 <td>{event.args[2].toString()}</td>
                 <td>{event.args[3].toString()}</td>
@@ -261,11 +441,23 @@ const Event = () => {
                 <td>{event.args[6].toString()}</td>
 				<td>{event.args[7].toString()}</td>
 
-				<td>{event.zPOSADD}</td>
-				<td>{event.zNEGADD}</td>
+				<td className='address'>{event.zPOSADD}</td>
+				<td className='address'>{event.zNEGADD}</td>
 
-				<td> <form onSubmit={(e) => depToPOS(e, event.args[8].toString())}> <input id={"POS"+index} type="text" ></input> <button type="submit" >POS</button> </form> </td>
-				<td> <form onSubmit={(e) => depToNEG(e, event.args[8].toString())}> <input id={"NEG"+index} type="text" ></input> <button type="submit" >NEG</button> </form> </td>
+				<td> <form className='deposit' onSubmit={(e) => depToPOS(e, event.args[8].toString())}> <input id={"POSd"+index} type="text" ></input> <button type="submit" >POS</button> </form> </td>
+				<td> <form className='deposit' onSubmit={(e) => depToNEG(e, event.args[8].toString())}> <input id={"NEGd"+index} type="text" ></input> <button type="submit" >NEG</button> </form> </td>
+
+				<td> <form className='approvePOS' onSubmit={(e) => approvePOS(e, event.zPOSADD, event.args[8].toString())}> <button type="submit" >approvePOS</button> </form> </td>
+				<td> <form className='approveNEG' onSubmit={(e) => approveNEG(e, event.zNEGADD, event.args[8].toString())}> <button type="submit" >approveNEG</button> </form> </td>
+
+				<td> <form className='redeemPOS' onSubmit={(e) => redeemwithPOS(e, event.args[8].toString())}> <button type="submit" >redeemPOS</button> </form> </td>
+				<td> <form className='redeemNEG' onSubmit={(e) => redeemwithNEG(e, event.args[8].toString())}> <button type="submit" >redeemNEG</button> </form> </td>
+
+				<td> <form className='withdrawPOS' onSubmit={(e) => withdrawPOS(e, event.args[8].toString())}> <button type="submit" >withdrawPOS</button> </form> </td>
+				<td> <form className='withdrawNEG' onSubmit={(e) => withdrawNEG(e, event.args[8].toString())}> <button type="submit" >withdrawNEG</button> </form> </td>
+
+				<td> <form className='settle' onSubmit={(e) => settleClaims(e, event.args[8].toString())}>  <button type="submit" >settle</button> </form> </td>
+				<td> <form className='turnwithdrawon' onSubmit={(e) => makeWithdrawable(e, event.args[8].toString())}>  <button type="submit" >turnwithdrawOn</button> </form> </td>
 
               </tr>
             ))}
