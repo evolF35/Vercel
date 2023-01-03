@@ -392,8 +392,8 @@ const Event = () => {
               <th> Settlement Price </th>
 			  <th> Settlement Date </th>
 			  <th> Decay Rate  </th>
-			  <th> Minimum Ratio </th>
-			  <th> Minimum Ratio Date </th>
+			  <th> Max Ratio </th>
+			  <th> Max Ratio Date </th>
 			  <th> name </th>
 			  <th> acronym </th>
 				
