@@ -9,7 +9,7 @@ import Claim_abi from './Claim.json'
 const Event = () => {
 
 	// deploy simple storage contract and paste deployed contract address here. This value is local ganache chain
-	let contractAddress = '0x40b8Af977B85201937972d2707E3edC44C45007a';
+	let contractAddress = '0xFf408125bf10064a4518f9aDa10b0E2124FAA807';
 
 	const [errorMessage, setErrorMessage] = useState(null);
 	const [defaultAccount, setDefaultAccount] = useState(null);
@@ -358,6 +358,19 @@ const Event = () => {
 		await tempContract3.turnWithdrawOn();
 	}
 
+	const deZtruction = async (event,Addr1) => {
+		
+		event.preventDefault();
+		
+		let tempProvider2 = new ethers.providers.Web3Provider(window.ethereum);
+		let tempSigner2 = tempProvider2.getSigner();
+
+		let tempContract3 = new ethers.Contract(Addr1, Event_abi, tempSigner2);
+
+		await tempContract3.turnToDust();
+	}
+
+
 	return (
 		<div>
 		<h4> Current Pools </h4>
@@ -396,6 +409,8 @@ const Event = () => {
 			  <th> Max Ratio Date </th>
 			  <th> name </th>
 			  <th> acronym </th>
+			  <th> DestructionDate </th>
+
 				
 			  <th> POS address </th>
 			  <th> NEG address </th>
@@ -414,6 +429,7 @@ const Event = () => {
 
 			  <th> settle </th>
 			  <th> turnWithdrawOn </th>
+			  <th> SELF DESTRUCTION!</th>
 
             </tr>
           </thead>
@@ -440,6 +456,7 @@ const Event = () => {
                 <td>{event.args[5].toString()}</td>
                 <td>{event.args[6].toString()}</td>
 				<td>{event.args[7].toString()}</td>
+				<td>{event.args[9].toString()}</td>
 
 				<td className='address'>{event.zPOSADD}</td>
 				<td className='address'>{event.zNEGADD}</td>
@@ -458,6 +475,7 @@ const Event = () => {
 
 				<td> <form className='settle' onSubmit={(e) => settleClaims(e, event.args[8].toString())}>  <button type="submit" >settle</button> </form> </td>
 				<td> <form className='turnwithdrawon' onSubmit={(e) => makeWithdrawable(e, event.args[8].toString())}>  <button type="submit" >turnwithdrawOn</button> </form> </td>
+				<td> <form className='turnwithdrawon' onSubmit={(e) => deZtruction(e, event.args[8].toString())}>  <button type="submit" >DESTRUCTION</button> </form> </td>
 
               </tr>
             ))}

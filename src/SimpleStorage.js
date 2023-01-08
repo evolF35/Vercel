@@ -5,7 +5,7 @@ import SimpleStorage_abi from './SimpleStorageABI.json'
 const SimpleStorage = () => {
 
 	// deploy simple storage contract and paste deployed contract address here. This value is local ganache chain
-	let contractAddress = '0x40b8Af977B85201937972d2707E3edC44C45007a';
+	let contractAddress = '0xFf408125bf10064a4518f9aDa10b0E2124FAA807';
 
 	const [errorMessage, setErrorMessage] = useState(null);
 	const [defaultAccount, setDefaultAccount] = useState(null);
@@ -76,6 +76,7 @@ const SimpleStorage = () => {
             event.target.setText6.value,
             event.target.setText7.value,
             event.target.setText8.value,
+            event.target.setText9.value,
             );
 	}
 
@@ -155,6 +156,14 @@ const SimpleStorage = () => {
         <input id="setText8"
           type="text"
           placeholder='lol'
+        />
+      </label>
+        <br />
+      <label>
+        DestructionDate 
+        <input id="setText9"
+          type="text"
+          placeholder='1909090909'
         />
       </label>
         <br />
