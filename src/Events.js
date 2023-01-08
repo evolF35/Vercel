@@ -118,7 +118,34 @@ const Event = () => {
 		console.log(done);
 
 		setTb(done);
-	}
+
+		const hiddenRows = document.querySelectorAll('.hidden-row');
+		for (let row of hiddenRows) {
+  			row.style.display = 'none';
+		}
+		const expandButtons = document.querySelectorAll('.expand-button');
+
+		for (let button of expandButtons) {
+  			button.addEventListener('click', function() {
+    		const hiddenRows = this.parentElement.parentElement.querySelectorAll('.hidden-row');
+    			if (hiddenRows[0].style.display !== 'none') {
+      				for (let row of hiddenRows) {
+        				row.style.display = 'none';
+     		 }
+    } else {
+      // Otherwise, show the rows
+      for (let row of hiddenRows) {
+        // Insert the hidden rows after the current row
+        this.parentElement.parentElement.insertAdjacentElement('afterend', row);
+        row.style.display = '';
+      }
+    }
+  });
+
+}
+
+
+}
 	  
 	  const getPoolInfo = async (pool) => {
 		try {
@@ -371,6 +398,7 @@ const Event = () => {
 	}
 
 
+
 	return (
 		<div>
 		<h4> Current Pools </h4>
@@ -389,47 +417,50 @@ const Event = () => {
         <table>
           <thead>
             <tr>
-
+				
 			<th> Total Balance </th>
 			<th> POS Balance </th>
 			<th> NEG Balance </th>
+
+			<th> Settlement Price </th>
+			  <th> Settlement Date </th>
+			  <th> Decay Rate  </th>
+			  <th> Max Ratio </th>
+			  <th> Max Ratio Date </th>
 
 			<th> Past Settlement Date </th>
 			<th> Condition </th>
 			<th> Discount Rate </th>
 			<th> Withdraw </th>
 
+			<th> Details </th>
 
-			<th> Contract Address </th>
-              <th>Oracle Address</th>
-              <th> Settlement Price </th>
-			  <th> Settlement Date </th>
-			  <th> Decay Rate  </th>
-			  <th> Max Ratio </th>
-			  <th> Max Ratio Date </th>
-			  <th> name </th>
-			  <th> acronym </th>
-			  <th> DestructionDate </th>
 
-				
-			  <th> POS address </th>
-			  <th> NEG address </th>
+			<th class="hidden-row"> Contract Address </th>
+              <th class="hidden-row">Oracle Address</th>
 
-			  <th> Deposit POS </th>
-			  <th> Deposit NEG </th>
+			  <th class="hidden-row"> name </th>
+			  <th class="hidden-row"> acronym </th>
+			  <th class="hidden-row"> DestructionDate </th>
 
-			  <th> Approve POS </th>
-			  <th> Approve NEG </th>
+			  <th class="hidden-row"> POS address </th>
+			  <th class="hidden-row"> NEG address </th>
 
-			  <th> Redeem POS </th>
-			  <th> Redeem NEG </th>
+			  <th class="hidden-row"> Deposit POS </th>
+			  <th class="hidden-row"> Deposit NEG </th>
 
-			  <th> Withdraw POS </th>
-			  <th> Withdraw NEG </th>
+			  <th class="hidden-row"> Approve POS </th>
+			  <th class="hidden-row"> Approve NEG </th>
 
-			  <th> settle </th>
-			  <th> turnWithdrawOn </th>
-			  <th> SELF DESTRUCTION!</th>
+			  <th class="hidden-row"> Redeem POS </th>
+			  <th class="hidden-row"> Redeem NEG </th>
+
+			  <th class="hidden-row"> Withdraw POS </th>
+			  <th class="hidden-row"> Withdraw NEG </th>
+
+			  <th class="hidden-row"> settle </th>
+			  <th class="hidden-row"> turnWithdrawOn </th>
+			  <th class="hidden-row"> SELF DESTRUCTION!</th>
 
             </tr>
           </thead>
@@ -441,41 +472,44 @@ const Event = () => {
 				<td>{event.zPOSBal}</td>
 				<td>{event.zNEGBal}</td>
 
+				<td>{event.args[1].toString()}</td>
+                <td>{event.args[2].toString()}</td>
+                <td>{event.args[3].toString()}</td>
+				<td>{event.args[4].toString()}</td>
+                <td>{event.args[5].toString()}</td>
+
 				<td> {event.zPSDATE} </td>
 				<td> {event.zCONDITION} </td>
 				<td> {event.zDVALUE} </td>
 				<td> {event.zWITHDRAW} </td>
 
+				<td><button class="expand-button">Expand</button></td>
 
-                <td className='address'>{event.args[8].toString()}</td>
-                <td className='address'>{event.args[0].toString()}</td>
-                <td>{event.args[1].toString()}</td>
-                <td>{event.args[2].toString()}</td>
-                <td>{event.args[3].toString()}</td>
-				<td>{event.args[4].toString()}</td>
-                <td>{event.args[5].toString()}</td>
-                <td>{event.args[6].toString()}</td>
-				<td>{event.args[7].toString()}</td>
-				<td>{event.args[9].toString()}</td>
+                <td className='address' class="hidden-row">{event.args[8].toString()}</td>
+                <td className='address' class="hidden-row">{event.args[0].toString()}</td>
 
-				<td className='address'>{event.zPOSADD}</td>
-				<td className='address'>{event.zNEGADD}</td>
+                <td class="hidden-row">{event.args[6].toString()}</td>
+				<td class="hidden-row">{event.args[7].toString()}</td>
+				<td class="hidden-row">{event.args[9].toString()}</td>
 
-				<td> <form className='deposit' onSubmit={(e) => depToPOS(e, event.args[8].toString())}> <input id={"POSd"+index} type="text" ></input> <button type="submit" >POS</button> </form> </td>
-				<td> <form className='deposit' onSubmit={(e) => depToNEG(e, event.args[8].toString())}> <input id={"NEGd"+index} type="text" ></input> <button type="submit" >NEG</button> </form> </td>
+				<td className='address' class="hidden-row">{event.zPOSADD}</td>
+				<td className='address' class="hidden-row">{event.zNEGADD}</td>
 
-				<td> <form className='approvePOS' onSubmit={(e) => approvePOS(e, event.zPOSADD, event.args[8].toString())}> <button type="submit" >approvePOS</button> </form> </td>
-				<td> <form className='approveNEG' onSubmit={(e) => approveNEG(e, event.zNEGADD, event.args[8].toString())}> <button type="submit" >approveNEG</button> </form> </td>
+				<td class="hidden-row"> <form className='deposit' onSubmit={(e) => depToPOS(e, event.args[8].toString())}> <input id={"POSd"+index} type="text" ></input> <button type="submit" >POS</button> </form> </td>
+				<td class="hidden-row"> <form className='deposit' onSubmit={(e) => depToNEG(e, event.args[8].toString())}> <input id={"NEGd"+index} type="text" ></input> <button type="submit" >NEG</button> </form> </td>
 
-				<td> <form className='redeemPOS' onSubmit={(e) => redeemwithPOS(e, event.args[8].toString())}> <button type="submit" >redeemPOS</button> </form> </td>
-				<td> <form className='redeemNEG' onSubmit={(e) => redeemwithNEG(e, event.args[8].toString())}> <button type="submit" >redeemNEG</button> </form> </td>
+				<td class="hidden-row"> <form className='approvePOS' onSubmit={(e) => approvePOS(e, event.zPOSADD, event.args[8].toString())}> <button type="submit" >approvePOS</button> </form> </td>
+				<td class="hidden-row"> <form className='approveNEG' onSubmit={(e) => approveNEG(e, event.zNEGADD, event.args[8].toString())}> <button type="submit" >approveNEG</button> </form> </td>
 
-				<td> <form className='withdrawPOS' onSubmit={(e) => withdrawPOS(e, event.args[8].toString())}> <button type="submit" >withdrawPOS</button> </form> </td>
-				<td> <form className='withdrawNEG' onSubmit={(e) => withdrawNEG(e, event.args[8].toString())}> <button type="submit" >withdrawNEG</button> </form> </td>
+				<td class="hidden-row"> <form className='redeemPOS' onSubmit={(e) => redeemwithPOS(e, event.args[8].toString())}> <button type="submit" >redeemPOS</button> </form> </td>
+				<td class="hidden-row"> <form className='redeemNEG' onSubmit={(e) => redeemwithNEG(e, event.args[8].toString())}> <button type="submit" >redeemNEG</button> </form> </td>
 
-				<td> <form className='settle' onSubmit={(e) => settleClaims(e, event.args[8].toString())}>  <button type="submit" >settle</button> </form> </td>
-				<td> <form className='turnwithdrawon' onSubmit={(e) => makeWithdrawable(e, event.args[8].toString())}>  <button type="submit" >turnwithdrawOn</button> </form> </td>
-				<td> <form className='turnwithdrawon' onSubmit={(e) => deZtruction(e, event.args[8].toString())}>  <button type="submit" >DESTRUCTION</button> </form> </td>
+				<td class="hidden-row"> <form className='withdrawPOS' onSubmit={(e) => withdrawPOS(e, event.args[8].toString())}> <button type="submit" >withdrawPOS</button> </form> </td>
+				<td class="hidden-row"> <form className='withdrawNEG' onSubmit={(e) => withdrawNEG(e, event.args[8].toString())}> <button type="submit" >withdrawNEG</button> </form> </td>
+
+				<td class="hidden-row"> <form className='settle' onSubmit={(e) => settleClaims(e, event.args[8].toString())}>  <button type="submit" >settle</button> </form> </td>
+				<td class="hidden-row"> <form className='turnwithdrawon' onSubmit={(e) => makeWithdrawable(e, event.args[8].toString())}>  <button type="submit" >turnwithdrawOn</button> </form> </td>
+				<td class="hidden-row"> <form className='turnwithdrawon' onSubmit={(e) => deZtruction(e, event.args[8].toString())}>  <button type="submit" >DESTRUCTION</button> </form> </td>
 
               </tr>
             ))}
