@@ -124,25 +124,35 @@ const Event = () => {
   			row.style.display = 'none';
 		}
 		const expandButtons = document.querySelectorAll('.expand-button');
-
-		for (let button of expandButtons) {
-  			button.addEventListener('click', function() {
-    		const hiddenRows = this.parentElement.parentElement.querySelectorAll('.hidden-row');
-    			if (hiddenRows[0].style.display !== 'none') {
-      				for (let row of hiddenRows) {
-        				row.style.display = 'none';
-     		 }
-    } else {
-      // Otherwise, show the rows
-      for (let row of hiddenRows) {
-        // Insert the hidden rows after the current row
-        this.parentElement.parentElement.insertAdjacentElement('afterend', row);
-        row.style.display = '';
+for (let button of expandButtons) {
+  button.addEventListener('click', function() {
+    const hiddenRows = this.parentElement.parentElement.querySelectorAll('.hidden-row');
+    if (hiddenRows.length > 0) {
+      if (hiddenRows[0].parentElement === this.parentElement.parentElement) {
+        // Hidden rows are already present, show or hide them
+        if (hiddenRows[0].style.display !== 'none') {
+          // Hide the rows
+          for (let row of hiddenRows) {
+            row.style.display = 'none';
+          }
+        } else {
+          // Show the rows
+          for (let row of hiddenRows) {
+            row.style.display = '';
+          }
+        }
+      } else {
+        // Hidden rows are not present, insert them
+        let html = '';
+        for (let row of hiddenRows) {
+          html += row.innerHTML;
+        }
+        this.parentElement.parentElement.insertAdjacentHTML('afterend', html);
       }
     }
   });
-
 }
+
 
 
 }
@@ -435,7 +445,6 @@ const Event = () => {
 
 			<th> Details </th>
 
-
 			<th class="hidden-row"> Contract Address </th>
               <th class="hidden-row">Oracle Address</th>
 
@@ -461,7 +470,7 @@ const Event = () => {
 			  <th class="hidden-row"> settle </th>
 			  <th class="hidden-row"> turnWithdrawOn </th>
 			  <th class="hidden-row"> SELF DESTRUCTION!</th>
-
+			  
             </tr>
           </thead>
           <tbody>
@@ -511,7 +520,8 @@ const Event = () => {
 				<td class="hidden-row"> <form className='turnwithdrawon' onSubmit={(e) => makeWithdrawable(e, event.args[8].toString())}>  <button type="submit" >turnwithdrawOn</button> </form> </td>
 				<td class="hidden-row"> <form className='turnwithdrawon' onSubmit={(e) => deZtruction(e, event.args[8].toString())}>  <button type="submit" >DESTRUCTION</button> </form> </td>
 
-              </tr>
+				</tr>
+
             ))}
           </tbody>
         </table>
